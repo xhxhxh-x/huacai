@@ -5,409 +5,524 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>华才实验室之“超级配方失窃案”</title>
     <style>
-#cover-page {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    z-index: 2000; /* 确保在最上层 */
-    background-color: #000;
-}
-        /* 弹窗遮罩层 */
-.modal-overlay {
-    display: none; /* 默认隐藏 */
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: rgba(0, 0, 0, 0.7);
-    z-index: 1000;
-    justify-content: center;
-    align-items: center;
-}
+        :root {
+            --ink: #35241c;
+            --paper: #eadfc9;
+            --paper-deep: #d7c5a5;
+            --wood: #5c4033;
+            --gold: #d9b451;
+            --danger: #8b2500;
+        }
 
-/* 弹窗主体：复古牛皮纸质感 */
-.modal-content {
-    background-color: #e8dcc4;
-    background-image: radial-gradient(circle, transparent 20%, #d4c4a8 100%);
-    border: 5px solid #5c4033;
-    padding: 30px;
-    width: 400px;
-    text-align: center;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-    border-radius: 2px;
-}
-
-/* 弹窗文字 */
-.modal-body {
-    font-size: 22px;
-    color: #3e2723;
-    margin-bottom: 25px;
-    font-weight: bold;
-    line-height: 1.5;
-}
-
-/* 弹窗按钮 */
-.modal-btn {
-    background-color: #5c4033;
-    color: #e8dcc4;
-    border: none;
-    padding: 10px 30px;
-    font-size: 18px;
-    cursor: pointer;
-    border-radius: 3px;
-    font-family: inherit;
-}
-
-.modal-btn:hover {
-    background-color: #3e2723;
-}
-        /* 基础重置与全局样式 */
         * {
             box-sizing: border-box;
-            margin: 0;
-            padding: 0;
         }
+
+        html {
+            min-height: 100%;
+        }
+
         body {
-            font-family: 'Times New Roman', 'SimSun', serif;
-            background-color: #2c241e;
+            min-height: 100vh;
+            margin: 0;
+            padding: clamp(12px, 2vw, 24px);
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            overflow: hidden;
-        }
-        
-        /* 页面容器 */
-        .screen {
-            display: none; /* 默认隐藏所有页面 */
-            width: 1000px;
-            height: 600px;
-            position: relative;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
-            border: 8px solid #5c4033;
-        }
-        .screen.active {
-            display: flex; /* 激活的页面显示 */
+            overflow: auto;
+            color: var(--ink);
+            background: #241d18;
+            font-family: "Times New Roman", "SimSun", serif;
         }
 
-        /* 第一页：开场画面 */
-        #screen1 {
-            /* 请确保背景图片文件名为 desk_bg.jpg 且与 html 文件在同一目录 */
-            background-image: url('desk_bg.jpg'); 
+        button {
+            font: inherit;
+        }
+
+        .screen {
+            display: none;
+            position: relative;
+            width: min(1000px, 100%);
+            min-height: min(600px, calc(100vh - 32px));
+            overflow: hidden;
+            border: 8px solid var(--wood);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.55);
+        }
+
+        .screen.active {
+            display: flex;
+        }
+
+        .cover-screen {
+            min-height: min(700px, calc(100vh - 32px));
+            align-items: center;
+            justify-content: center;
+            background: #050403;
+            text-align: center;
+        }
+
+        .cover-art {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .cover-shade {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(0, 0, 0, 0.18), rgba(0, 0, 0, 0.72));
+        }
+
+        .cover-content {
+            position: relative;
+            z-index: 1;
+            width: min(760px, calc(100% - 32px));
+            color: #fff8e7;
+            text-shadow: 0 4px 16px rgba(0, 0, 0, 0.75);
+        }
+
+        .cover-title {
+            margin: 0 0 14px;
+            font-size: clamp(34px, 7vw, 72px);
+            line-height: 1.12;
+            letter-spacing: 0;
+        }
+
+        .cover-copy {
+            margin: 0 0 28px;
+            font-size: clamp(18px, 2.4vw, 26px);
+        }
+
+        .gold-btn,
+        .submit-btn {
+            min-height: 46px;
+            border: 3px solid var(--ink);
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: transform 0.12s ease, filter 0.12s ease;
+        }
+
+        .gold-btn {
+            padding: 14px 46px;
+            color: var(--ink);
+            background: linear-gradient(180deg, #f1d172, #bc8d17);
+            font-size: clamp(20px, 3vw, 30px);
+            box-shadow: 0 10px 22px rgba(0, 0, 0, 0.38);
+        }
+
+        .submit-btn {
+            padding: 12px 40px;
+            color: var(--paper);
+            background: var(--wood);
+            border: 0;
+            font-size: 20px;
+        }
+
+        .gold-btn:hover,
+        .submit-btn:hover,
+        .modal-btn:hover {
+            filter: brightness(1.06);
+        }
+
+        .gold-btn:active,
+        .submit-btn:active,
+        .modal-btn:active {
+            transform: scale(0.97);
+        }
+
+        .intro-screen {
+            min-height: 600px;
+            align-items: center;
+            justify-content: center;
+            background-color: #1b1512;
+            background-image: linear-gradient(rgba(0, 0, 0, 0.12), rgba(0, 0, 0, 0.3)), url("assets/desk-bg.jpg");
             background-size: cover;
             background-position: center;
-            justify-content: center;
-            align-items: center;
-        }
-        .start-btn {
-            background: linear-gradient(180deg, #d4af37, #b8860b);
-            border: 3px solid #3e2723;
-            color: #3e2723;
-            font-size: 28px;
-            font-weight: bold;
-            padding: 15px 50px;
-            cursor: pointer;
-            border-radius: 5px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
-            transition: transform 0.1s;
-        }
-        .start-btn:active {
-            transform: scale(0.95);
         }
 
-        /* 第二页 & 第三页：复古牛皮纸推理界面 */
         .deduction-screen {
-            background-color: #e8dcc4; /* 牛皮纸底色 */
-            background-image: radial-gradient(circle, transparent 20%, #d4c4a8 100%);
-            padding: 40px;
-            flex-direction: row; /* 左右分栏 */
+            min-height: 600px;
+            padding: 40px 40px 110px;
+            flex-direction: row;
+            gap: 30px;
+            background-color: var(--paper);
+            background-image: radial-gradient(circle, transparent 20%, var(--paper-deep) 100%);
         }
-        
-        /* 左侧文案区 */
+
         .left-panel {
             flex: 6;
             padding-right: 30px;
             border-right: 2px dashed #8b7355;
-            font-size: 20px;
-            line-height: 2;
-            color: #3e2723;
             display: flex;
             flex-direction: column;
             justify-content: center;
+            color: var(--ink);
+            font-size: 20px;
+            line-height: 2;
         }
-        
-        /* 右侧选项区 */
+
+        .left-panel p {
+            margin: 0 0 16px;
+        }
+
+        .left-panel p:last-child {
+            margin-bottom: 0;
+        }
+
         .right-panel {
             flex: 4;
-            padding-left: 30px;
             display: flex;
             flex-wrap: wrap;
             align-content: flex-start;
-            gap: 15px;
+            gap: 14px;
         }
 
-        /* 底部操作区 */
         .bottom-bar {
             position: absolute;
-            bottom: 30px;
+            left: 0;
+            bottom: 28px;
             width: 100%;
             text-align: center;
-            left: 0;
         }
 
-       .blank {
-    display: inline-block;
-    min-width: 120px;       /* 稍微加宽，避免文字太挤 */
-    height: auto;           /* 改为 auto，让 padding 生效 */
-    border-bottom: 2px solid #5c4033;
-    margin: 0 5px;
-    text-align: center;
-    vertical-align: bottom;
-    
-    /* 核心修改：大幅增加底部内边距，并将行高设为1 */
-    padding-bottom: 10px;   /* 文字下方留出 15px 的空白 */
-    line-height: 1;         /* 确保文字本身不带有额外的行间距 */
-    
-    font-weight: bold;
-    color: #8b2500;
-    cursor: pointer;
-}
-
-        /* 选项按钮 */
-        .option-btn {
-            background-color: #f4ece1;
-            border: 2px solid #8b7355;
-            color: #3e2723;
-            padding: 10px 15px;
-            font-size: 16px;
-            font-weight: bold;
+        .blank {
+            display: inline-block;
+            min-width: 118px;
+            margin: 0 5px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--wood);
+            color: var(--danger);
             cursor: pointer;
-            border-radius: 4px;
-            box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+            font-weight: 700;
+            line-height: 1;
+            text-align: center;
+            vertical-align: bottom;
         }
-        /* 选项被选中后的置灰状态 */
+
+        .option-btn {
+            min-height: 42px;
+            padding: 9px 14px;
+            border: 2px solid #8b7355;
+            border-radius: 5px;
+            color: var(--ink);
+            background-color: #f7efe2;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.18);
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 700;
+        }
+
         .option-btn.grayed {
+            color: #777;
             background-color: #ccc;
             border-color: #999;
-            color: #777;
-            cursor: not-allowed;
             box-shadow: none;
+            cursor: not-allowed;
         }
 
-        /* 完成推理按钮 */
-        .submit-btn {
-            background-color: #5c4033;
-            color: #e8dcc4;
-            border: none;
-            padding: 12px 40px;
-            font-size: 20px;
-            cursor: pointer;
-            border-radius: 5px;
-            font-family: inherit;
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 20;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.7);
         }
-        .submit-btn:hover {
-            background-color: #3e2723;
+
+        .modal-overlay.open {
+            display: flex;
+        }
+
+        .modal-content {
+            width: min(420px, 100%);
+            padding: 30px;
+            border: 5px solid var(--wood);
+            border-radius: 4px;
+            text-align: center;
+            background-color: var(--paper);
+            background-image: radial-gradient(circle, transparent 20%, var(--paper-deep) 100%);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-body {
+            margin-bottom: 24px;
+            color: var(--ink);
+            font-size: 22px;
+            font-weight: 700;
+            line-height: 1.5;
+        }
+
+        .modal-btn {
+            min-height: 42px;
+            padding: 10px 30px;
+            border: 0;
+            border-radius: 4px;
+            color: var(--paper);
+            background-color: var(--wood);
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        @media (max-width: 760px) {
+            body {
+                align-items: stretch;
+                padding: 0;
+            }
+
+            .screen {
+                width: 100%;
+                min-height: 100vh;
+                border: 0;
+                box-shadow: none;
+            }
+
+            .cover-screen,
+            .intro-screen {
+                min-height: 100vh;
+            }
+
+            .deduction-screen {
+                min-height: 100vh;
+                padding: 20px 20px 96px;
+                flex-direction: column;
+                gap: 18px;
+                overflow: auto;
+            }
+
+            .left-panel {
+                display: block;
+                flex: none;
+                padding-right: 0;
+                padding-bottom: 18px;
+                border-right: 0;
+                border-bottom: 2px dashed #8b7355;
+                font-size: 16px;
+                line-height: 1.75;
+            }
+
+            .right-panel {
+                flex: none;
+                gap: 10px;
+            }
+
+            .blank {
+                min-width: 82px;
+                margin: 0 3px;
+                padding-bottom: 5px;
+            }
+
+            .option-btn {
+                flex: 1 1 calc(50% - 10px);
+                padding: 9px 10px;
+                font-size: 15px;
+            }
+
+            .bottom-bar {
+                position: sticky;
+                bottom: -1px;
+                margin: 8px -20px -96px;
+                padding: 14px 20px 20px;
+                width: auto;
+                background: linear-gradient(180deg, rgba(234, 223, 201, 0), rgba(234, 223, 201, 0.96) 28%, rgba(234, 223, 201, 1));
+            }
+
+            .submit-btn {
+                width: min(280px, 100%);
+            }
+        }
+
+        @media (max-width: 430px) {
+            .cover-content {
+                width: min(340px, calc(100% - 28px));
+            }
+
+            .cover-title {
+                font-size: 34px;
+            }
+
+            .option-btn {
+                flex-basis: 100%;
+            }
         }
     </style>
 </head>
 <body>
-<div id="cover-page" class="screen active" onclick="startGame()">
-    <img src="fengmian.png" alt="封面" style="width: 100%; height: 100%; object-fit: cover; cursor: pointer;">
-    <div style="position: absolute; bottom: 10%; width: 100%; text-align: center; color: white; font-size: 20px; text-shadow: 2px 2px 4px #000;">
-        点击任意处开启侦探之旅
-    </div>
-</div>
-    <div id="screen1" class="screen active">
-        <button class="start-btn" id="start-btn">开始探案</button>
-    </div>
-
-    <div id="screen2" class="screen deduction-screen">
-        <div class="left-panel">
-            <p>证据A中的白色粉末遇碘伏变成了 <span class="blank" data-id="s2-b1"></span>，这证明它是 <span class="blank" data-id="s2-b2"></span>。这与嫌疑人 <span class="blank" data-id="s2-b3"></span> 最近研究的植物淀粉提取技术完全吻合。</p>
-            <p>证据B是看似空白的便条，用 <span class="blank" data-id="s2-b4"></span> 喷洒后，显现出文字，这说明写便条的人用了 <span class="blank" data-id="s2-b5"></span> 写隐形字。习惯在办公桌上放柠檬的正是 <span class="blank" data-id="s2-b6"></span>。</p>
-            <p>证据C为在保险柜把手上检测到的液体，滴入紫甘蓝汁后变成了 <span class="blank" data-id="s2-b7"></span>，说明该液体呈 <span class="blank" data-id="s2-b8"></span>，而昨天刚打翻过紫甘蓝汁的是 <span class="blank" data-id="s2-b9"></span>。</p>
-        </div>
-        <div class="right-panel" id="options2">
+    <main id="game-root">
+        <section id="cover-page" class="screen cover-screen active" aria-label="游戏入口">
+            <img class="cover-art" src="assets/cover.jpg" alt="华才实验室封面">
+            <div class="cover-shade" aria-hidden="true"></div>
+            <div class="cover-content">
+                <h1 class="cover-title">华才实验室之<br>“超级配方失窃案”</h1>
+                <p class="cover-copy">进入现场，找出真正的窃贼。</p>
+                <button class="gold-btn" id="enter-btn" type="button">进入游戏</button>
             </div>
-        <div class="bottom-bar">
-            <button class="submit-btn" id="submit2">完成推理</button>
+        </section>
+
+        <section id="screen1" class="screen intro-screen" aria-label="案件开始">
+            <button class="gold-btn" id="start-btn" type="button">开始探案</button>
+        </section>
+
+        <section id="screen2" class="screen deduction-screen" aria-label="第一轮推理">
+            <div class="left-panel">
+                <p>证据A中的白色粉末遇碘伏变成了 <span class="blank" data-id="s2-b1"></span>，这证明它是 <span class="blank" data-id="s2-b2"></span>。这与嫌疑人 <span class="blank" data-id="s2-b3"></span> 最近研究的植物淀粉提取技术完全吻合。</p>
+                <p>证据B是看似空白的便条，用 <span class="blank" data-id="s2-b4"></span> 喷洒后，显现出文字，这说明写便条的人用了 <span class="blank" data-id="s2-b5"></span> 写隐形字。习惯在办公桌上放柠檬的正是 <span class="blank" data-id="s2-b6"></span>。</p>
+                <p>证据C为在保险柜把手上检测到的液体，滴入紫甘蓝汁后变成了 <span class="blank" data-id="s2-b7"></span>，说明该液体呈 <span class="blank" data-id="s2-b8"></span>，而昨天刚打翻过紫甘蓝汁的是 <span class="blank" data-id="s2-b9"></span>。</p>
+            </div>
+            <div class="right-panel" id="options2"></div>
+            <div class="bottom-bar">
+                <button class="submit-btn" id="submit2" type="button">完成推理</button>
+            </div>
+        </section>
+
+        <section id="screen3" class="screen deduction-screen" aria-label="最终推理">
+            <div class="left-panel">
+                <p>因此，我们认定本案是 <span class="blank" data-id="s3-b1"></span>。</p>
+                <p>真正的窃贼是 <span class="blank" data-id="s3-b2"></span> 和 <span class="blank" data-id="s3-b3"></span>！</p>
+            </div>
+            <div class="right-panel" id="options3"></div>
+            <div class="bottom-bar">
+                <button class="submit-btn" id="submit3" type="button">完成推理</button>
+            </div>
+        </section>
+    </main>
+
+    <div id="custom-alert" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-message">
+        <div class="modal-content">
+            <div class="modal-body" id="modal-message"></div>
+            <button class="modal-btn" id="modal-confirm" type="button">确认</button>
         </div>
     </div>
-
-<div id="screen3" class="screen deduction-screen">
-    <div class="left-panel">
-        <p>因此，我们认定本案是 <span class="blank" data-id="s3-b1"></span>。</p>
-        <br>
-        <p>真正的窃贼是 <span class="blank" data-id="s3-b2"></span> 和 <span class="blank" data-id="s3-b3"></span>！</p>
-    </div>
-
-    <div class="right-panel" id="options3">
-        </div>
-
-    <div class="bottom-bar">
-        <button class="submit-btn" id="submit3">完成推理</button>
-    </div>
-</div>
 
     <script>
-function startGame() {
-    // 隐藏封面
-    document.getElementById('cover-page').classList.remove('active');
-    // 显示第一个推理页面（假设 ID 是 screen1）
-    document.getElementById('screen1').classList.add('active');
-}
-        // 显示自定义弹窗
-function showModal(message, callback) {
-    const modal = document.getElementById('custom-alert');
-    document.getElementById('modal-message').innerText = message;
-    modal.style.display = 'flex';
-    // 将回调函数挂载到窗口对象，方便确认按钮调用
-    window.currentModalCallback = callback;
-}
-
-// 关闭自定义弹窗
-function closeModal() {
-    document.getElementById('custom-alert').style.display = 'none';
-    if (window.currentModalCallback) {
-        window.currentModalCallback();
-        window.currentModalCallback = null;
-    }
-}
-        // --- 核心数据配置 ---
         const caseData = {
             screen2: {
                 options: ["蓝色", "紫色", "淀粉", "莫教授", "碘伏水", "柠檬汁", "椰子水", "小李研究员", "红色", "碱性", "酸性", "小王实习生"],
-                // 页面2的正确答案顺序
-                correctAnswers: ["蓝色", "淀粉", "莫教授", "碘伏水", "柠檬汁", "小李研究员", "红色", "酸性", "小王实习生"] 
+                correctAnswers: ["蓝色", "淀粉", "莫教授", "碘伏水", "柠檬汁", "小李研究员", "红色", "酸性", "小王实习生"]
             },
             screen3: {
-    options: ["一人单独作案", "两人团伙作案", "三人共同作案", "莫教授", "小李研究员", "小王实习生"],
-    correctAnswers: ["两人团伙作案"], // 这里同步改为两人
-    thiefGroup: ["莫教授", "小李研究员"] // 正确的窃贼名单
-}
+                options: ["一人单独作案", "两人团伙作案", "三人共同作案", "莫教授", "小李研究员", "小王实习生"],
+                correctAnswers: ["两人团伙作案"],
+                thiefGroup: ["莫教授", "小李研究员"]
+            }
         };
 
-        // --- 页面切换逻辑 ---
-        document.getElementById('start-btn').addEventListener('click', () => {
-            document.getElementById('screen1').classList.remove('active');
-            document.getElementById('screen2').classList.add('active');
-        });
+        let currentModalCallback = null;
 
-        // --- 通用交互逻辑初始化 ---
+        function showScreen(screenId) {
+            document.querySelectorAll(".screen").forEach((screen) => {
+                screen.classList.toggle("active", screen.id === screenId);
+            });
+        }
+
+        function showModal(message, callback, buttonText = "确认") {
+            const modal = document.getElementById("custom-alert");
+            document.getElementById("modal-message").innerText = message;
+            document.getElementById("modal-confirm").innerText = buttonText;
+            currentModalCallback = callback;
+            modal.classList.add("open");
+        }
+
+        function closeModal() {
+            document.getElementById("custom-alert").classList.remove("open");
+            const callback = currentModalCallback;
+            currentModalCallback = null;
+            if (typeof callback === "function") {
+                callback();
+            }
+        }
+
         function initDeductionLogic(screenId, data, isFinalScreen) {
             const screen = document.getElementById(screenId);
-            const optionsContainer = screen.querySelector('.right-panel');
-            const blanks = Array.from(screen.querySelectorAll('.blank'));
-            const submitBtn = screen.querySelector('.submit-btn');
+            const optionsContainer = screen.querySelector(".right-panel");
+            const blanks = Array.from(screen.querySelectorAll(".blank"));
+            const submitBtn = screen.querySelector(".submit-btn");
 
-            // 1. 渲染选项按钮
             data.options.forEach((optText, index) => {
-                const btn = document.createElement('button');
-                btn.className = 'option-btn';
+                const btn = document.createElement("button");
+                btn.className = "option-btn";
                 btn.textContent = optText;
                 btn.id = `${screenId}-opt-${index}`;
-                
-                // 选项点击事件：填入第一个空着的横线
-                btn.addEventListener('click', () => {
-                    if (btn.classList.contains('grayed')) return; // 已灰化则无反应
+                btn.type = "button";
 
-                    const firstEmptyBlank = blanks.find(b => !b.dataset.value);
+                btn.addEventListener("click", () => {
+                    if (btn.classList.contains("grayed")) {
+                        return;
+                    }
+
+                    const firstEmptyBlank = blanks.find((blank) => !blank.dataset.value);
                     if (firstEmptyBlank) {
                         firstEmptyBlank.textContent = optText;
                         firstEmptyBlank.dataset.value = optText;
-                        firstEmptyBlank.dataset.sourceBtnId = btn.id; // 记录来源以便撤销
-                        btn.classList.add('grayed');
+                        firstEmptyBlank.dataset.sourceBtnId = btn.id;
+                        btn.classList.add("grayed");
                     }
                 });
+
                 optionsContainer.appendChild(btn);
             });
 
-            // 2. 空格点击事件：撤销填空
-            blanks.forEach(blank => {
-                blank.addEventListener('click', () => {
-                    if (blank.dataset.value) {
-                        // 找到来源按钮并恢复
-                        const sourceBtn = document.getElementById(blank.dataset.sourceBtnId);
-                        if (sourceBtn) {
-                            sourceBtn.classList.remove('grayed');
-                        }
-                        // 清空当前横线
-                        blank.textContent = '';
-                        delete blank.dataset.value;
-                        delete blank.dataset.sourceBtnId;
+            blanks.forEach((blank) => {
+                blank.addEventListener("click", () => {
+                    if (!blank.dataset.value) {
+                        return;
                     }
+
+                    const sourceBtn = document.getElementById(blank.dataset.sourceBtnId);
+                    if (sourceBtn) {
+                        sourceBtn.classList.remove("grayed");
+                    }
+
+                    blank.textContent = "";
+                    delete blank.dataset.value;
+                    delete blank.dataset.sourceBtnId;
                 });
             });
 
-            // 3. 提交与校验逻辑
-            submitBtn.addEventListener('click', () => {
-                // 检查是否全部填满
-                const allFilled = blanks.every(b => b.dataset.value);
-                if (!allFilled) {
-                    alert("请填满所有线索后再进行推理！");
+            submitBtn.addEventListener("click", () => {
+                if (!blanks.every((blank) => blank.dataset.value)) {
+                    showModal("请填满所有线索后再进行推理！");
                     return;
                 }
 
-                let isCorrect = true;
-
+                let isCorrect;
                 if (!isFinalScreen) {
-                    // 页面2：严格按照顺序校验
-                    isCorrect = blanks.every((b, index) => b.dataset.value === data.correctAnswers[index]);
-                // 找到这部分代码进行修改：
-} else {
-    // 页面3：第一个空校验作案人数，后面两个空校验人员（无序）
-    if (blanks[0].dataset.value !== data.correctAnswers[0]) {
-        isCorrect = false;
-    } else {
-        // 【关键修改点】：这里只获取 blanks[1] 和 blanks[2] 即可
-        const userThieves = [blanks[1].dataset.value, blanks[2].dataset.value];
-        
-        // 检查用户填入的人员是否包含在正确列表中
-        const hasAllThieves = data.thiefGroup.every(thief => userThieves.includes(thief));
-        
-        // 同时确保用户没有重复填同一个人，且名单长度一致
-        if (!hasAllThieves || userThieves.length !== data.thiefGroup.length) {
-            isCorrect = false;
-        }
-    }
-}
+                    isCorrect = blanks.every((blank, index) => blank.dataset.value === data.correctAnswers[index]);
+                } else {
+                    const userThieves = [blanks[1].dataset.value, blanks[2].dataset.value];
+                    isCorrect = blanks[0].dataset.value === data.correctAnswers[0]
+                        && data.thiefGroup.every((thief) => userThieves.includes(thief))
+                        && new Set(userThieves).size === data.thiefGroup.length;
+                }
 
-               // 将原来的校验反馈部分改为：
-if (isCorrect) {
-    if (isFinalScreen) {
-        // 改变弹窗按钮的文字
-        const modalBtn = document.querySelector('.modal-btn');
-        modalBtn.innerText = "再次推理";
-        
-        showModal("恭喜这位侦探，全部推理正确，破案成功！", () => {
-            // 点击“再次推理”后，重载页面回到初始状态
-            location.reload(); 
-        });
-    } else {
-        showModal("恭喜这位侦探，全部推理正确，破案成功！", () => {
-            screen.classList.remove('active');
-            document.getElementById('screen3').classList.add('active');
-        });
-    }
-} else {
-    // 失败时确保按钮文字是“确 认”
-    document.querySelector('.modal-btn').innerText = "确 认";
-    showModal("很遗憾，您的推理需要再完善", null);
-}
+                if (!isCorrect) {
+                    showModal("很遗憾，您的推理需要再完善。");
+                    return;
+                }
+
+                if (isFinalScreen) {
+                    showModal("恭喜这位侦探，全部推理正确，破案成功！", () => {
+                        window.location.reload();
+                    }, "再次推理");
+                } else {
+                    showModal("第一轮推理正确，继续锁定嫌疑人。", () => {
+                        showScreen("screen3");
+                    });
+                }
             });
         }
 
-        // 初始化两个推理页面
-        initDeductionLogic('screen2', caseData.screen2, false);
-        initDeductionLogic('screen3', caseData.screen3, true);
-
+        document.addEventListener("DOMContentLoaded", () => {
+            document.getElementById("enter-btn").addEventListener("click", () => showScreen("screen1"));
+            document.getElementById("start-btn").addEventListener("click", () => showScreen("screen2"));
+            document.getElementById("modal-confirm").addEventListener("click", closeModal);
+            initDeductionLogic("screen2", caseData.screen2, false);
+            initDeductionLogic("screen3", caseData.screen3, true);
+        });
     </script>
-    <div id="custom-alert" class="modal-overlay">
-    <div class="modal-content">
-        <div class="modal-body" id="modal-message"></div>
-        <button class="modal-btn" onclick="closeModal()">确 认</button>
-    </div>
-</div>
 </body>
 </html>
